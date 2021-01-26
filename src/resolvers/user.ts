@@ -45,11 +45,11 @@ export class UserResolver {
             ],
         };
     }
-    if (options.password.length <= 3) {
+    if (options.password.length <= 2) {
             return {
                 errors: [{
                     field: "password",
-                    message: "length must be greater than 3",
+                    message: "length must be greater than 2",
                 },
             ],
         };
@@ -59,7 +59,21 @@ export class UserResolver {
             username: options.username, 
             password: hashedPassword,
          });
-        await em.persistAndFlush(user);
+        
+        try {
+            await em.persistAndFlush(user);
+        } catch(err) {
+            if (err.code === '23505' || err.detail.includes("already exists")) {
+                //duplicate username error
+                return {
+                    errors: [{
+                        field: "username",
+                        message: "this username has already been taken"
+                    }]
+                }
+            }
+            console.log("message: ", err.message);
+        }
         return { user };
     }
 
