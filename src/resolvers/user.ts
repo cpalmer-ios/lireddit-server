@@ -7,7 +7,7 @@ import { UsernamePasswordInput } from './UsernamePasswordInput';
 import { validateRegister } from '../utils/validateRegister';
 import { sendEmail } from '../utils/sendEmail';
 import { v4 } from 'uuid';
-import { getConnection } from 'typeorm';
+// import { getConnection } from 'typeorm';
 @ObjectType()
 class FieldError {
     @Field()
@@ -136,19 +136,24 @@ export class UserResolver {
         const hashedPassword = await argon2.hash(options.password)
         let user;
         try {
-            const result = await getConnection()
-                .createQueryBuilder()
-                .insert()
-                .into(User)
-                .values({
-                    username: options.username,
-                    email: options.email,
-                    password: hashedPassword,
-                    })
-                .returning("*")
-                .execute();
+            const result = await User.create({
+                username: options.username,
+                email: options.email,
+                password: hashedPassword,
+            }).save();
+            // const result = await getConnection()
+            //     .createQueryBuilder()
+            //     .insert()
+            //     .into(User)
+            //     .values({
+            //         username: options.username,
+            //         email: options.email,
+            //         password: hashedPassword,
+            //         })
+            //     .returning("*")
+            //     .execute();
             // console.log("result:", result);
-            user = result.raw[0];
+            user = result;
         } catch (err) {
             // console.log(err)
             if (err.code === '23505' || err.detail.includes("already exists")) {
@@ -162,7 +167,7 @@ export class UserResolver {
             }
             console.log("message: ", err.message);
         }
-        req.session.userId = user.id;
+        req.session.userId = user?.id;
 
         return { user };
     }

@@ -16,7 +16,6 @@ export class PostResolver {
     @Mutation(() => Post)
     async createPost(
         @Arg('title') title: string): Promise<Post> {
-        //2 sql queries
         return Post.create({ title }).save();
     }
 
