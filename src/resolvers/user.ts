@@ -58,7 +58,7 @@ export class UserResolver {
             };
         }
 
-        const userIdNum = parseInt(userId)
+        const userIdNum = parseInt(userId);
         const user = await User.findOne(userIdNum);
 
         if (!user) {
@@ -205,6 +205,8 @@ export class UserResolver {
         // this will set a cookie on the user
         // keep them logged in
         req.session.userId = user.id;
+
+        
 
         return { user };
     }
