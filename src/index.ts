@@ -20,9 +20,9 @@ const main = async () => {
 //    const conn = await createConnection({
    await createConnection({
         type: 'postgres',
-        database: 'lireddit2',
-        username: 'webdev',
-        password: 'Ezekias000',
+        database: 'postgres',
+        username: 'postgres',
+        password: 'root',
         logging: true,
         synchronize: true,
         migrations: [path.join(__dirname, "./migrations/*")],
